@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VU Student Match Report · Vidyashilp University</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #0F6E56; --green-light: #1D9E75; --green-bg: #E1F5EE;
+    --green-dark: #085041; --amber: #854F0B; --amber-bg: #FAEEDA;
+    --amber-border: #FAC775; --amber-dark: #633806;
+    --blue-bg: #E6F1FB; --blue: #185FA5;
+    --text: #1a1a1a; --text2: #555; --text3: #888;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --bg: #fff; --bg2: #f7f7f5; --bg3: #f0f0ec;
+    --radius: 10px; --radius-sm: 7px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  body { font-family: var(--font); background: var(--bg2); color: var(--text); min-height: 100vh; }
+  .page { max-width: 680px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* Hero */
+  .hero { text-align: center; padding: 2rem 0 1.5rem; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; background: var(--bg); border: 0.5px solid var(--border); border-radius: 999px; padding: 6px 16px; font-size: 13px; color: var(--text2); margin-bottom: 1.1rem; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-light); flex-shrink: 0; }
+  .hero h1 { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 0.45rem; }
+  .hero p { font-size: 15px; color: var(--text2); line-height: 1.65; max-width: 460px; margin: 0 auto; }
+
+  /* Progress */
+  .pbar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin: 1.5rem 0; }
+  .pbar { height: 100%; background: var(--green-light); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+
+  /* Steps */
+  .step { display: none; }
+  .step.active { display: block; animation: fadeUp 0.22s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-tag { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.35rem; }
+  .q-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 1rem; line-height: 1.45; }
+  .q-hint { font-size: 13px; color: var(--text2); margin-top: -0.5rem; margin-bottom: 1rem; line-height: 1.55; }
+
+  /* Options */
+  .opts { display: flex; flex-direction: column; gap: 9px; }
+  .opt { display: flex; align-items: flex-start; gap: 12px; padding: 13px 15px; border: 0.5px solid var(--border); border-radius: var(--radius); cursor: pointer; background: var(--bg); transition: border-color 0.15s, background 0.15s; }
+  .opt:hover { border-color: var(--border2); background: var(--bg2); }
+  .opt.sel { border-color: var(--green-light); background: var(--green-bg); }
+  .radio { width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; }
+  .opt.sel .radio { border-color: var(--green-light); background: var(--green-light); }
+  .pip { width: 7px; height: 7px; border-radius: 50%; background: white; display: none; }
+  .opt.sel .pip { display: block; }
+  .opt-label { font-size: 14px; color: var(--text); line-height: 1.4; font-weight: 500; }
+  .opt-desc { font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.4; }
+
+  /* Text input */
+  .txt { width: 100%; padding: 12px 14px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; font-family: var(--font); color: var(--text); background: var(--bg); }
+  .txt:focus { outline: none; border-color: var(--green-light); }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+  .ctr { font-size: 13px; color: var(--text3); }
+  .btn { padding: 10px 22px; border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font); cursor: pointer; transition: all 0.15s; }
+  .btn-ghost { background: transparent; border: 0.5px solid var(--border2); color: var(--text2); }
+  .btn-ghost:hover { background: var(--bg3); }
+  .btn-primary { background: var(--green); border: none; color: white; font-weight: 600; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* Result */
+  .result { padding: 0.5rem 0; }
+  .r-header { text-align: center; padding: 1.5rem 0 1rem; }
+  .r-greet { font-size: 13px; color: var(--text2); margin-bottom: 0.5rem; }
+  .ring-wrap { position: relative; display: inline-block; width: 150px; height: 150px; }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .ring-num { font-size: 36px; font-weight: 700; color: var(--text); line-height: 1; }
+  .ring-of { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .r-label { font-size: 17px; font-weight: 600; color: var(--text); margin-top: 0.65rem; }
+  .r-sub { font-size: 13px; color: var(--text2); margin-top: 0.3rem; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+  .sec-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); margin: 1.5rem 0 0.75rem; }
+  .dims { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dim { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 13px 14px; }
+  .dim-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+  .dim-name { font-size: 12px; color: var(--text2); }
+  .dim-pct { font-size: 13px; font-weight: 600; color: var(--text); }
+  .dim-bar { height: 3px; background: var(--border); border-radius: 2px; }
+  .dim-fill { height: 100%; border-radius: 2px; }
+  .dim-note { font-size: 11px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
+
+  .insights { margin: 0.25rem 0; }
+  .insight { display: flex; gap: 11px; padding: 13px 0; border-bottom: 0.5px solid var(--border); }
+  .insight:last-child { border-bottom: none; }
+  .i-ico { width: 26px; height: 26px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; font-weight: 700; }
+  .i-g { background: var(--green-bg); color: var(--green); }
+  .i-b { background: var(--blue-bg); color: var(--blue); }
+  .i-a { background: var(--amber-bg); color: var(--amber); }
+  .i-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .i-desc { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+  .concern { background: var(--amber-bg); border: 0.5px solid var(--amber-border); border-radius: var(--radius); padding: 14px 16px; margin: 1rem 0; }
+  .concern-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 5px; font-weight: 600; }
+  .concern-txt { font-size: 13px; color: var(--amber-dark); line-height: 1.6; }
+
+  .cta { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-top: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .cta h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .cta p { font-size: 12px; color: var(--text2); }
+  .btn-cta { background: var(--green); border: none; color: white; padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .btn-cta:hover { background: var(--green-dark); }
+
+  .disc { font-size: 11px; color: var(--text3); text-align: center; margin-top: 1.25rem; line-height: 1.6; border-top: 0.5px solid var(--border); padding-top: 0.85rem; }
+  .restart { text-align: center; margin-top: 0.75rem; }
+  .restart a { font-size: 12px; color: var(--text3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Submission toast */
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: white; padding: 10px 16px; border-radius: var(--radius-sm); font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 460px) {
+    .dims { grid-template-columns: 1fr; }
+    .cta { flex-direction: column; align-items: flex-start; }
+    .hero h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="badge"><span class="dot"></span>Vidyashilp University · Match Report</div>
+    <h1>Is VU the right fit for you?</h1>
+    <p>10 questions. A personalised match report. Honest about what fits — and what to think about.</p>
+  </div>
+
+  <div class="pbar-wrap"><div class="pbar" id="pbar"></div></div>
+
+  <div id="steps">
+
+    <div class="step active" id="s0">
+      <div class="step-tag">Let's start</div>
+      <div class="q-title">What's your first name?</div>
+      <input class="txt" id="name-inp" type="text" placeholder="Your first name" />
+      <div class="nav"><span class="ctr">1 of 10</span><button class="btn btn-primary" onclick="fromName()">Continue</button></div>
+    </div>
+
+    <div class="step" id="s1">
+      <div class="step-tag">Programme interest</div>
+      <div class="q-title">Which area are you most interested in studying?</div>
+      <div class="opts" id="q1"></div>
+      <div class="nav"><span class="ctr">2 of 10</span><button class="btn btn-primary" id="n1" disabled onclick="go(1,2)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s2">
+      <div class="step-tag">Academic background</div>
+      <div class="q-title">Which stream are you currently in or have completed?</div>
+      <div class="opts" id="q2"></div>
+      <div class="nav"><span class="ctr">3 of 10</span><button class="btn btn-primary" id="n2" disabled onclick="go(2,3)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s3">
+      <div class="step-tag">Timeline</div>
+      <div class="q-title">When are you planning to join university?</div>
+      <div class="opts" id="q3"></div>
+      <div class="nav"><span class="ctr">4 of 10</span><button class="btn btn-primary" id="n3" disabled onclick="go(3,4)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s4">
+      <div class="step-tag">Learning style</div>
+      <div class="q-title">How do you learn best?</div>
+      <div class="q-hint">No right answer — this tells us about fit, not ability.</div>
+      <div class="opts" id="q4"></div>
+      <div class="nav"><span class="ctr">5 of 10</span><button class="btn btn-primary" id="n4" disabled onclick="go(4,5)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s5">
+      <div class="step-tag">Priorities</div>
+      <div class="q-title">What matters most to you in a university?</div>
+      <div class="opts" id="q5"></div>
+      <div class="nav"><span class="ctr">6 of 10</span><button class="btn btn-primary" id="n5" disabled onclick="go(5,6)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s6">
+      <div class="step-tag">Career outlook</div>
+      <div class="q-title">Where do you see yourself five years after graduation?</div>
+      <div class="opts" id="q6"></div>
+      <div class="nav"><span class="ctr">7 of 10</span><button class="btn btn-primary" id="n6" disabled onclick="go(6,7)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s7">
+      <div class="step-tag">Campus life</div>
+      <div class="q-title">What kind of campus environment suits you?</div>
+      <div class="opts" id="q7"></div>
+      <div class="nav"><span class="ctr">8 of 10</span><button class="btn btn-primary" id="n7" disabled onclick="go(7,8)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s8">
+      <div class="step-tag">Location</div>
+      <div class="q-title">Where are you based, and what's your living preference?</div>
+      <div class="q-hint">VU is in north Bengaluru — this affects how relevant the fit is for you.</div>
+      <div class="opts" id="q8"></div>
+      <div class="nav"><span class="ctr">9 of 10</span><button class="btn btn-primary" id="n8" disabled onclick="go(8,9)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s9">
+      <div class="step-tag">Honest check</div>
+      <div class="q-title">What's your biggest hesitation about choosing a university?</div>
+      <div class="q-hint">We use this to address your actual concern in the report — not to sell you.</div>
+      <div class="opts" id="q9"></div>
+      <div class="nav"><span class="ctr">10 of 10</span><button class="btn btn-primary" id="n9" disabled onclick="showResult()">See my match report</button></div>
+    </div>
+
+    <div class="step" id="sR"><div id="result"></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIGURATION ────────────────────────────────────────────────────
+// Replace this with your Google Apps Script Web App URL after setup
+const WEBHOOK_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+// Replace with your actual admissions page URL
+const ADMISSIONS_URL = "https://vidyashilpuniversity.edu.in";
+// ──────────────────────────────────────────────────────────────────────
+
+const Qs = [
+  { id:"prog", opts:[
+    {l:"Engineering or Technology", d:"CSE, ECE, Mechanical, Civil", s:{acad:9,career:10,research:9}, tag:"engg"},
+    {l:"Design or Architecture", d:"Product design, visual communication, spatial design", s:{acad:9,career:8,research:8}, tag:"design"},
+    {l:"Business or Commerce", d:"BBA, BCom, Finance, Marketing", s:{acad:9,career:10,research:6}, tag:"biz"},
+    {l:"Liberal Arts or Humanities", d:"Psychology, Media, Sociology, Literature", s:{acad:9,career:7,research:9}, tag:"arts"},
+    {l:"Pure Sciences", d:"Physics, Chemistry, Mathematics, Biology", s:{acad:10,career:7,research:10}, tag:"sci"},
+    {l:"Not decided yet", d:"Still exploring my options", s:{acad:7,career:7,research:7}, tag:"undecided"}
+  ]},
+  { id:"stream", opts:[
+    {l:"Science (PCM)", d:null, s:{acad:10}},
+    {l:"Science (PCB)", d:null, s:{acad:9}},
+    {l:"Commerce", d:null, s:{acad:9}},
+    {l:"Humanities / Arts", d:null, s:{acad:8}},
+    {l:"Other / Undecided", d:null, s:{acad:7}}
+  ]},
+  { id:"timeline", opts:[
+    {l:"This year (2025–26)", d:"Actively applying now", s:{}, tag:"now"},
+    {l:"Next year (2026–27)", d:"Researching ahead of time", s:{}, tag:"next"},
+    {l:"Two or more years away", d:"Early exploration phase", s:{}, tag:"later"},
+    {l:"Just curious / exploring", d:"No firm plans yet", s:{}, tag:"curious"}
+  ]},
+  { id:"style", opts:[
+    {l:"Hands-on — projects, labs, building things", d:null, s:{env:10,style:10}},
+    {l:"Structured — clear syllabus and lectures", d:null, s:{acad:8,style:7}},
+    {l:"Collaborative — discussions and group work", d:null, s:{env:9,style:9}},
+    {l:"Self-directed — independent research", d:null, s:{research:10,style:9}}
+  ]},
+  { id:"priority", opts:[
+    {l:"Strong industry connections and placements", d:null, s:{career:10,outcomes:10}},
+    {l:"Faculty quality and academic depth", d:null, s:{acad:10,research:9}},
+    {l:"Holistic development and student life", d:null, s:{env:10,outcomes:8}},
+    {l:"Flexibility to explore across subjects", d:null, s:{acad:9,style:10}}
+  ]},
+  { id:"career", opts:[
+    {l:"Work at a top company or MNC", d:null, s:{career:10,outcomes:9}},
+    {l:"Start my own venture", d:null, s:{career:9,research:8,outcomes:10}},
+    {l:"Pursue postgrad or research", d:null, s:{acad:10,research:10}},
+    {l:"Work in social impact or public sector", d:null, s:{outcomes:9,env:8}}
+  ]},
+  { id:"campus", opts:[
+    {l:"Active — clubs, fests, lots happening", d:null, s:{env:10}},
+    {l:"Focused — quiet spaces for deep work", d:null, s:{research:9,style:9}},
+    {l:"Collaborative — team-first community", d:null, s:{env:9,style:9}},
+    {l:"Well-designed with good infrastructure", d:null, s:{env:8,outcomes:7}}
+  ]},
+  { id:"location", opts:[
+    {l:"I'm in Bengaluru — happy to commute", d:null, s:{env:9}, tag:"local"},
+    {l:"I'm in Bengaluru — want hostel life", d:null, s:{env:10}, tag:"hostel"},
+    {l:"I'm outside Bengaluru — open to relocating", d:null, s:{env:8}, tag:"relocate"},
+    {l:"Outside Bengaluru — still deciding", d:null, s:{env:6}, tag:"unsure"}
+  ]},
+  { id:"concern", opts:[
+    {l:"Placement outcomes and salary", d:"Will I get a good job after this?", s:{}, concern:"placement"},
+    {l:"Brand recognition", d:"Will employers know this university?", s:{}, concern:"brand"},
+    {l:"Fees and return on investment", d:"Is this worth the cost?", s:{}, concern:"cost"},
+    {l:"Social and cultural fit", d:"Will I feel at home here?", s:{}, concern:"culture"}
+  ]}
+];
+
+const progInsights = {
+  engg: {title:"Engineering at VU", desc:"VU's engineering programmes are NEP 2020-aligned with an emphasis on applied learning, research labs, and industry projects. The CSE programme has growing placement traction with tech companies."},
+  design: {title:"Design at VU", desc:"VU has a strong design faculty with studio-based learning at its core. If you thrive in project-led environments with critique and iteration, this is a natural fit."},
+  biz: {title:"Business programmes", desc:"BBA and BCom at VU are built with industry exposure in mind — live projects, guest faculty from industry, and an active placement cell with corporate partners."},
+  arts: {title:"Liberal Arts at VU", desc:"VU's liberal arts offering is one of the more serious ones in the region — interdisciplinary by design, with strong faculty in humanities and social sciences."},
+  sci: {title:"Pure Sciences at VU", desc:"If research is your path, VU has active research centres and faculty with publication records who involve undergraduates in their work — relatively rare at this level."},
+  undecided: {title:"Still deciding — that's fine", desc:"VU's structure allows flexibility in the early semesters, and the admissions team is genuinely helpful in guiding undecided students toward the right programme."}
+};
+
+const concernText = {
+  placement: "Placements are improving year on year, with a mix of corporates, startups, and consulting firms. Honest truth: outcomes depend heavily on your own effort — but the infrastructure is there and the placement cell is active.",
+  brand: "VU is a young university — founded in 2021. Some employers look at brand; others look at skills and attitude. Early graduates often become brand ambassadors, which can work in your favour. A campus visit will help you gauge this for yourself.",
+  cost: "Fees are competitive for a private university in Bengaluru, and scholarship options exist. ROI depends on your programme, your effort, and your goals. We recommend talking to current students about their experience.",
+  culture: "The student community is diverse and still forming its identity — which is either exciting or uncertain depending on how you look at it. The campus is designed to encourage interaction. Best way to test this: visit and spend a few hours there."
+};
+
+const timelineCTAs = {
+  now:     {h:"Ready to take the next step?",    p:"Applications for 2025–26 are open. Speak with admissions this week.", btn:"Apply now"},
+  next:    {h:"Start your application early",     p:"2026–27 applications open soon. Register your interest to stay updated.", btn:"Register interest"},
+  later:   {h:"Keep VU on your list",             p:"You have time — use it to visit campus and explore your options.", btn:"Plan a campus visit"},
+  curious: {h:"Worth a closer look",              p:"No pressure. A campus visit costs nothing and tells you more than any report.", btn:"Explore VU"}
+};
+
+let ans = {}, name = "";
+
+function buildQuestions() {
+  Qs.forEach((q, i) => {
+    const el = document.getElementById("q" + (i + 1));
+    q.opts.forEach((o, oi) => {
+      const d = document.createElement("div");
+      d.className = "opt";
+      d.innerHTML = `<div class="radio"><div class="pip"></div></div><div><div class="opt-label">${o.l}</div>${o.d ? `<div class="opt-desc">${o.d}</div>` : ""}</div>`;
+      d.onclick = () => {
+        el.querySelectorAll(".opt").forEach(x => x.classList.remove("sel"));
+        d.classList.add("sel");
+        ans[q.id] = { idx: oi, opt: o };
+        const nb = document.getElementById("n" + (i + 1));
+        if (nb) nb.disabled = false;
+      };
+      el.appendChild(d);
+    });
+  });
+}
+
+function go(from, to) {
+  document.getElementById("s" + from).classList.remove("active");
+  document.getElementById("s" + to).classList.add("active");
+  document.getElementById("pbar").style.width = Math.round(to / 10 * 100) + "%";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function fromName() {
+  const v = document.getElementById("name-inp").value.trim();
+  name = v || "You";
+  go(0, 1);
+  document.getElementById("pbar").style.width = "10%";
+}
+
+function calcScores() {
+  let t = { acad: 0, career: 0, env: 0, research: 0, outcomes: 0, style: 0 };
+  let c = { acad: 0, career: 0, env: 0, research: 0, outcomes: 0, style: 0 };
+  Qs.forEach(q => {
+    const a = ans[q.id];
+    if (!a) return;
+    Object.entries(a.opt.s || {}).forEach(([k, v]) => {
+      if (t[k] !== undefined) { t[k] += v; c[k]++; }
+    });
+  });
+  const dims = {
+    acad:     c.acad     > 0 ? Math.round(t.acad / c.acad * 10)         : 72,
+    career:   c.career   > 0 ? Math.round(t.career / c.career * 10)     : 72,
+    env:      c.env      > 0 ? Math.round(t.env / c.env * 10)           : 72,
+    research: c.research > 0 ? Math.round(t.research / c.research * 10) : 72
+  };
+  const overall = Math.round((dims.acad + dims.career + dims.env + dims.research) / 4);
+  return {
+    dims, overall,
+    prog:     ans.prog     ? ans.prog.opt.tag         : "undecided",
+    timeline: ans.timeline ? ans.timeline.opt.tag     : "curious",
+    concern:  ans.concern  ? ans.concern.opt.concern  : null
+  };
+}
+
+function submitToSheet(payload) {
+  if (!WEBHOOK_URL || WEBHOOK_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") return;
+  fetch(WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    mode: "no-cors"
+  }).catch(() => {});
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function showResult() {
+  document.getElementById("s9").classList.remove("active");
+  document.getElementById("pbar").style.width = "100%";
+
+  const { dims, overall, prog, timeline, concern } = calcScores();
+
+  // Build answer labels for the sheet
+  const answers = {};
+  Qs.forEach(q => {
+    if (ans[q.id]) answers[q.id] = ans[q.id].opt.l;
+  });
+
+  // Submit to Google Sheet
+  submitToSheet({
+    timestamp:    new Date().toISOString(),
+    name:         name,
+    score:        overall,
+    match_label:  overall >= 83 ? "Strong match" : overall >= 70 ? "Good match" : "Moderate match",
+    programme:    answers.prog     || "",
+    stream:       answers.stream   || "",
+    timeline:     answers.timeline || "",
+    learning:     answers.style    || "",
+    priority:     answers.priority || "",
+    career_goal:  answers.career   || "",
+    campus_pref:  answers.campus   || "",
+    location:     answers.location || "",
+    concern:      answers.concern  || "",
+    dim_acad:     dims.acad,
+    dim_career:   dims.career,
+    dim_env:      dims.env,
+    dim_research: dims.research
+  });
+
+  const label   = overall >= 83 ? "Strong match" : overall >= 70 ? "Good match" : "Moderate match";
+  const sub     = overall >= 83
+    ? `Your profile aligns well with what VU is designed for, ${name}.`
+    : overall >= 70
+    ? `There's solid alignment, ${name} — with a couple of things worth thinking through.`
+    : `There's some common ground, ${name}, but it's worth going in with open questions.`;
+
+  const C   = 2 * Math.PI * 55;
+  const off = C * (1 - overall / 100);
+  const rc  = overall >= 83 ? "#1D9E75" : overall >= 70 ? "#378ADD" : "#EF9F27";
+
+  const dimDefs = [
+    { key: "acad",     label: "Academic rigour",    color: "#1D9E75", note: "NEP-aligned curriculum, interdisciplinary electives, experienced faculty" },
+    { key: "career",   label: "Career readiness",   color: "#378ADD", note: "300+ industry partners, active placement cell, alumni network" },
+    { key: "env",      label: "Campus environment", color: "#7F77DD", note: "Designed campus in north Bengaluru, clubs, fests, student-first culture" },
+    { key: "research", label: "Research access",    color: "#EF9F27", note: "Active research centres, faculty publications, student research support" }
+  ];
+
+  const pi  = progInsights[prog] || progInsights.undecided;
+  const cta = timelineCTAs[timeline] || timelineCTAs.curious;
+
+  document.getElementById("result").innerHTML = `
+    <div class="result">
+      <div class="r-header">
+        <div class="r-greet">Your match report, ${name}</div>
+        <div class="ring-wrap">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="55" fill="none" stroke="#e5e5e0" stroke-width="7"/>
+            <circle cx="75" cy="75" r="55" fill="none" stroke="${rc}" stroke-width="7" stroke-linecap="round"
+              stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" id="rarc"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-num" id="snum">0</div>
+            <div class="ring-of">/ 100</div>
+          </div>
+        </div>
+        <div class="r-label">${label}</div>
+        <div class="r-sub">${sub}</div>
+      </div>
+
+      <div class="sec-title">How your dimensions score</div>
+      <div class="dims">
+        ${dimDefs.map(d => `
+        <div class="dim">
+          <div class="dim-top"><span class="dim-name">${d.label}</span><span class="dim-pct">${dims[d.key]}%</span></div>
+          <div class="dim-bar"><div class="dim-fill" id="df-${d.key}" style="width:0%;background:${d.color}"></div></div>
+          <div class="dim-note">${d.note}</div>
+        </div>`).join("")}
+      </div>
+
+      <div class="sec-title">What this means for you</div>
+      <div class="insights">
+        <div class="insight">
+          <div class="i-ico i-g">✓</div>
+          <div><div class="i-title">${pi.title}</div><div class="i-desc">${pi.desc}</div></div>
+        </div>
+        <div class="insight">
+          <div class="i-ico ${dims.career >= 78 ? "i-g" : "i-b"}">${dims.career >= 78 ? "✓" : "→"}</div>
+          <div>
+            <div class="i-title">${dims.career >= 78 ? "Career infrastructure is a strength" : "Career support — building but not yet complete"}</div>
+            <div class="i-desc">${dims.career >= 78
+              ? "VU's placement cell has seen consistent growth, with recruiters across tech, consulting, and business. The network is still young but genuinely active."
+              : "Placement outcomes at VU are improving but still building. If top-tier campus placements are your primary goal, cross-check the latest placement reports directly."
+            }</div>
+          </div>
+        </div>
+        <div class="insight">
+          <div class="i-ico ${dims.research >= 78 ? "i-g" : "i-b"}">${dims.research >= 78 ? "✓" : "→"}</div>
+          <div>
+            <div class="i-title">${dims.research >= 78 ? "Research is a genuine fit" : "Research access available — if you seek it"}</div>
+            <div class="i-desc">${dims.research >= 78
+              ? "Your profile suggests a research orientation that VU can genuinely support — faculty-led projects, research centres, and a culture that encourages curiosity."
+              : "Research opportunities exist at VU, but you'll need to be proactive. They won't come to you automatically."
+            }</div>
+          </div>
+        </div>
+      </div>
+
+      ${concern ? `
+      <div class="concern">
+        <div class="concern-lbl">You asked about: ${concern === "placement" ? "placements" : concern === "brand" ? "brand recognition" : concern === "cost" ? "fees and ROI" : "cultural fit"}</div>
+        <div class="concern-txt">${concernText[concern]}</div>
+      </div>` : ""}
+
+      <div class="cta">
+        <div><h3>${cta.h}</h3><p>${cta.p}</p></div>
+        <button class="btn-cta" onclick="window.open('${ADMISSIONS_URL}','_blank')">${cta.btn} →</button>
+      </div>
+
+      <div class="disc">This score reflects alignment between your stated preferences and what VU currently offers. It is a starting point for your decision — not a verdict. We recommend visiting campus and speaking with current students before deciding.</div>
+      <div class="restart"><a onclick="restart()">Start over</a></div>
+    </div>`;
+
+  document.getElementById("sR").classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  setTimeout(() => {
+    const arc = document.getElementById("rarc");
+    if (arc) { arc.style.transition = "stroke-dashoffset 1.2s ease"; arc.style.strokeDashoffset = off.toFixed(1); }
+    dimDefs.forEach(d => {
+      const el = document.getElementById("df-" + d.key);
+      if (el) { el.style.transition = "width 1s ease"; el.style.width = dims[d.key] + "%"; }
+    });
+    let cur = 0;
+    const el = document.getElementById("snum");
+    const iv = setInterval(() => {
+      cur = Math.min(cur + 2, overall);
+      if (el) el.textContent = cur;
+      if (cur >= overall) clearInterval(iv);
+    }, 18);
+  }, 120);
+}
+
+function restart() {
+  ans = {}; name = "";
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".opt").forEach(o => o.classList.remove("sel"));
+  for (let i = 1; i <= 9; i++) { const b = document.getElementById("n" + i); if (b) b.disabled = true; }
+  document.getElementById("name-inp").value = "";
+  document.getElementById("s0").classList.add("active");
+  document.getElementById("pbar").style.width = "0%";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+buildQuestions();
+</script>
+</body>
+</html>
