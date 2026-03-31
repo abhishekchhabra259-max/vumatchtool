@@ -118,6 +118,11 @@
   .restart { text-align: center; margin-top: 0.75rem; }
   .restart a { font-size: 12px; color: var(--text3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 
+  .checkbox { width: 17px; height: 17px; border-radius: 4px; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; }
+  .opt.sel .checkbox { border-color: var(--green-light); background: var(--green-light); }
+  .checkmark { font-size: 11px; color: white; display: none; font-weight: 700; }
+  .opt.sel .checkmark { display: block; }
+
   /* Submission toast */
   .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: white; padding: 10px 16px; border-radius: var(--radius-sm); font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
   .toast.show { opacity: 1; }
@@ -242,7 +247,7 @@
 <script>
 // ─── CONFIGURATION ────────────────────────────────────────────────────
 // Replace this with your Google Apps Script Web App URL after setup
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycby3KNDClYq7xuzbynJaG_Dubwpacmg26Njft70ETtxYkvjI0P14c3zd-zUFJqbwMvUmQQ/exec";
+const WEBHOOK_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
 // Replace with your actual admissions page URL
 const ADMISSIONS_URL = "https://vidyashilpuniversity.edu.in";
@@ -255,6 +260,7 @@ const Qs = [
     {l:"Business or Commerce", d:"BBA, BCom, Finance, Marketing", s:{acad:9,career:10,research:6}, tag:"biz"},
     {l:"Liberal Arts or Humanities", d:"Psychology, Media, Sociology, Literature", s:{acad:9,career:7,research:9}, tag:"arts"},
     {l:"Pure Sciences", d:"Physics, Chemistry, Mathematics, Biology", s:{acad:10,career:7,research:10}, tag:"sci"},
+    {l:"Law", d:"LLB, integrated law programmes", s:{acad:10,career:9,research:8}, tag:"law"},
     {l:"Not decided yet", d:"Still exploring my options", s:{acad:7,career:7,research:7}, tag:"undecided"}
   ]},
   { id:"stream", opts:[
@@ -282,7 +288,7 @@ const Qs = [
     {l:"Holistic development and student life", d:null, s:{env:10,outcomes:8}},
     {l:"Flexibility to explore across subjects", d:null, s:{acad:9,style:10}}
   ]},
-  { id:"career", opts:[
+  { id:"career", multiSelect:true, opts:[
     {l:"Work at a top company or MNC", d:null, s:{career:10,outcomes:9}},
     {l:"Start my own venture", d:null, s:{career:9,research:8,outcomes:10}},
     {l:"Pursue postgrad or research", d:null, s:{acad:10,research:10}},
@@ -314,6 +320,7 @@ const progInsights = {
   biz: {title:"Business programmes", desc:"BBA and BCom at VU are built with industry exposure in mind — live projects, guest faculty from industry, and an active placement cell with corporate partners."},
   arts: {title:"Liberal Arts at VU", desc:"VU's liberal arts offering is one of the more serious ones in the region — interdisciplinary by design, with strong faculty in humanities and social sciences."},
   sci: {title:"Pure Sciences at VU", desc:"If research is your path, VU has active research centres and faculty with publication records who involve undergraduates in their work — relatively rare at this level."},
+  law: {title:"Law at VU", desc:"VU's law programme is built with a strong foundation in legal reasoning, constitutional law, and practical court exposure. A good fit if you want rigorous academics with a professional career path."},
   undecided: {title:"Still deciding — that's fine", desc:"VU's structure allows flexibility in the early semesters, and the admissions team is genuinely helpful in guiding undecided students toward the right programme."}
 };
 
@@ -336,17 +343,40 @@ let ans = {}, name = "";
 function buildQuestions() {
   Qs.forEach((q, i) => {
     const el = document.getElementById("q" + (i + 1));
+    if (q.multiSelect) {
+      // Add "select all that apply" hint
+      const hint = document.createElement("div");
+      hint.style.cssText = "font-size:12px;color:var(--text3);margin-bottom:10px;";
+      hint.textContent = "Select all that apply";
+      el.appendChild(hint);
+    }
     q.opts.forEach((o, oi) => {
       const d = document.createElement("div");
       d.className = "opt";
-      d.innerHTML = `<div class="radio"><div class="pip"></div></div><div><div class="opt-label">${o.l}</div>${o.d ? `<div class="opt-desc">${o.d}</div>` : ""}</div>`;
-      d.onclick = () => {
-        el.querySelectorAll(".opt").forEach(x => x.classList.remove("sel"));
-        d.classList.add("sel");
-        ans[q.id] = { idx: oi, opt: o };
-        const nb = document.getElementById("n" + (i + 1));
-        if (nb) nb.disabled = false;
-      };
+      if (q.multiSelect) {
+        // Square checkbox style for multi-select
+        d.innerHTML = `<div class="checkbox"><div class="checkmark">✓</div></div><div><div class="opt-label">${o.l}</div>${o.d ? `<div class="opt-desc">${o.d}</div>` : ""}</div>`;
+        d.onclick = () => {
+          d.classList.toggle("sel");
+          // Build array of selected opts
+          const selected = Array.from(el.querySelectorAll(".opt.sel")).map(el => {
+            const idx = Array.from(el.parentNode.children).indexOf(el) - 1; // -1 for hint div
+            return q.opts[idx];
+          }).filter(Boolean);
+          ans[q.id] = selected.length > 0 ? { idx: 0, opt: selected[0], multi: selected } : null;
+          const nb = document.getElementById("n" + (i + 1));
+          if (nb) nb.disabled = selected.length === 0;
+        };
+      } else {
+        d.innerHTML = `<div class="radio"><div class="pip"></div></div><div><div class="opt-label">${o.l}</div>${o.d ? `<div class="opt-desc">${o.d}</div>` : ""}</div>`;
+        d.onclick = () => {
+          el.querySelectorAll(".opt").forEach(x => x.classList.remove("sel"));
+          d.classList.add("sel");
+          ans[q.id] = { idx: oi, opt: o };
+          const nb = document.getElementById("n" + (i + 1));
+          if (nb) nb.disabled = false;
+        };
+      }
       el.appendChild(d);
     });
   });
@@ -372,9 +402,18 @@ function calcScores() {
   Qs.forEach(q => {
     const a = ans[q.id];
     if (!a) return;
-    Object.entries(a.opt.s || {}).forEach(([k, v]) => {
-      if (t[k] !== undefined) { t[k] += v; c[k]++; }
-    });
+    if (a.multi) {
+      // Average scores across all selected options
+      a.multi.forEach(opt => {
+        Object.entries(opt.s || {}).forEach(([k, v]) => {
+          if (t[k] !== undefined) { t[k] += v; c[k]++; }
+        });
+      });
+    } else {
+      Object.entries(a.opt.s || {}).forEach(([k, v]) => {
+        if (t[k] !== undefined) { t[k] += v; c[k]++; }
+      });
+    }
   });
   const dims = {
     acad:     c.acad     > 0 ? Math.round(t.acad / c.acad * 10)         : 72,
@@ -443,7 +482,7 @@ function showResult() {
     timeline:     answers.timeline || "",
     learning:     answers.style    || "",
     priority:     answers.priority || "",
-    career_goal:  answers.career   || "",
+    career_goal:  ans.career ? (ans.career.multi ? ans.career.multi.map(o=>o.l).join(", ") : ans.career.opt.l) : "",
     campus_pref:  answers.campus   || "",
     location:     answers.location || "",
     phone:        document.getElementById('phone-inp') ? document.getElementById('phone-inp').value.trim() : '',
@@ -580,6 +619,26 @@ function restart() {
   document.getElementById("pbar").style.width = "0%";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
+
+// Enter key navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  const active = document.querySelector('.step.active');
+  if (!active) return;
+  const id = active.id;
+
+  if (id === 's0') {
+    fromName();
+  } else if (id === 's10') {
+    submitContact();
+  } else {
+    // For question steps — only proceed if an option is selected
+    const stepNum = parseInt(id.replace('s', ''));
+    const btn = document.getElementById('n' + stepNum);
+    if (btn && !btn.disabled) btn.click();
+  }
+});
 
 buildQuestions();
 </script>
