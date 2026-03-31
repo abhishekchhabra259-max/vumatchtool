@@ -108,6 +108,12 @@
   .btn-cta { background: var(--green); border: none; color: white; padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .btn-cta:hover { background: var(--green-dark); }
 
+  .contact-fields { display: flex; flex-direction: column; gap: 12px; margin-bottom: 0.5rem; }
+  .field-wrap { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { font-size: 13px; color: var(--text2); font-weight: 500; }
+  .field-optional { font-size: 11px; color: var(--text3); margin-left: 5px; font-weight: 400; }
+  .skip-link { text-align: center; margin-top: 1rem; }
+  .skip-link a { font-size: 13px; color: var(--text3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .disc { font-size: 11px; color: var(--text3); text-align: center; margin-top: 1.25rem; line-height: 1.6; border-top: 0.5px solid var(--border); padding-top: 0.85rem; }
   .restart { text-align: center; margin-top: 0.75rem; }
   .restart a { font-size: 12px; color: var(--text3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
@@ -129,7 +135,7 @@
   <div class="hero">
     <div class="badge"><span class="dot"></span>Vidyashilp University · Match Report</div>
     <h1>Is VU the right fit for you?</h1>
-    <p>10 questions. A personalised match report. Honest about what fits — and what to think about.</p>
+    <p>11 questions. A personalised match report. Honest about what fits — and what to think about.</p>
   </div>
 
   <div class="pbar-wrap"><div class="pbar" id="pbar"></div></div>
@@ -140,28 +146,28 @@
       <div class="step-tag">Let's start</div>
       <div class="q-title">What's your first name?</div>
       <input class="txt" id="name-inp" type="text" placeholder="Your first name" />
-      <div class="nav"><span class="ctr">1 of 10</span><button class="btn btn-primary" onclick="fromName()">Continue</button></div>
+      <div class="nav"><span class="ctr">1 of 11</span><button class="btn btn-primary" onclick="fromName()">Continue</button></div>
     </div>
 
     <div class="step" id="s1">
       <div class="step-tag">Programme interest</div>
       <div class="q-title">Which area are you most interested in studying?</div>
       <div class="opts" id="q1"></div>
-      <div class="nav"><span class="ctr">2 of 10</span><button class="btn btn-primary" id="n1" disabled onclick="go(1,2)">Continue</button></div>
+      <div class="nav"><span class="ctr">2 of 11</span><button class="btn btn-primary" id="n1" disabled onclick="go(1,2)">Continue</button></div>
     </div>
 
     <div class="step" id="s2">
       <div class="step-tag">Academic background</div>
       <div class="q-title">Which stream are you currently in or have completed?</div>
       <div class="opts" id="q2"></div>
-      <div class="nav"><span class="ctr">3 of 10</span><button class="btn btn-primary" id="n2" disabled onclick="go(2,3)">Continue</button></div>
+      <div class="nav"><span class="ctr">3 of 11</span><button class="btn btn-primary" id="n2" disabled onclick="go(2,3)">Continue</button></div>
     </div>
 
     <div class="step" id="s3">
       <div class="step-tag">Timeline</div>
       <div class="q-title">When are you planning to join university?</div>
       <div class="opts" id="q3"></div>
-      <div class="nav"><span class="ctr">4 of 10</span><button class="btn btn-primary" id="n3" disabled onclick="go(3,4)">Continue</button></div>
+      <div class="nav"><span class="ctr">4 of 11</span><button class="btn btn-primary" id="n3" disabled onclick="go(3,4)">Continue</button></div>
     </div>
 
     <div class="step" id="s4">
@@ -169,28 +175,28 @@
       <div class="q-title">How do you learn best?</div>
       <div class="q-hint">No right answer — this tells us about fit, not ability.</div>
       <div class="opts" id="q4"></div>
-      <div class="nav"><span class="ctr">5 of 10</span><button class="btn btn-primary" id="n4" disabled onclick="go(4,5)">Continue</button></div>
+      <div class="nav"><span class="ctr">5 of 11</span><button class="btn btn-primary" id="n4" disabled onclick="go(4,5)">Continue</button></div>
     </div>
 
     <div class="step" id="s5">
       <div class="step-tag">Priorities</div>
       <div class="q-title">What matters most to you in a university?</div>
       <div class="opts" id="q5"></div>
-      <div class="nav"><span class="ctr">6 of 10</span><button class="btn btn-primary" id="n5" disabled onclick="go(5,6)">Continue</button></div>
+      <div class="nav"><span class="ctr">6 of 11</span><button class="btn btn-primary" id="n5" disabled onclick="go(5,6)">Continue</button></div>
     </div>
 
     <div class="step" id="s6">
       <div class="step-tag">Career outlook</div>
       <div class="q-title">Where do you see yourself five years after graduation?</div>
       <div class="opts" id="q6"></div>
-      <div class="nav"><span class="ctr">7 of 10</span><button class="btn btn-primary" id="n6" disabled onclick="go(6,7)">Continue</button></div>
+      <div class="nav"><span class="ctr">7 of 11</span><button class="btn btn-primary" id="n6" disabled onclick="go(6,7)">Continue</button></div>
     </div>
 
     <div class="step" id="s7">
       <div class="step-tag">Campus life</div>
       <div class="q-title">What kind of campus environment suits you?</div>
       <div class="opts" id="q7"></div>
-      <div class="nav"><span class="ctr">8 of 10</span><button class="btn btn-primary" id="n7" disabled onclick="go(7,8)">Continue</button></div>
+      <div class="nav"><span class="ctr">8 of 11</span><button class="btn btn-primary" id="n7" disabled onclick="go(7,8)">Continue</button></div>
     </div>
 
     <div class="step" id="s8">
@@ -198,7 +204,7 @@
       <div class="q-title">Where are you based, and what's your living preference?</div>
       <div class="q-hint">VU is in north Bengaluru — this affects how relevant the fit is for you.</div>
       <div class="opts" id="q8"></div>
-      <div class="nav"><span class="ctr">9 of 10</span><button class="btn btn-primary" id="n8" disabled onclick="go(8,9)">Continue</button></div>
+      <div class="nav"><span class="ctr">9 of 11</span><button class="btn btn-primary" id="n8" disabled onclick="go(8,9)">Continue</button></div>
     </div>
 
     <div class="step" id="s9">
@@ -206,7 +212,25 @@
       <div class="q-title">What's your biggest hesitation about choosing a university?</div>
       <div class="q-hint">We use this to address your actual concern in the report — not to sell you.</div>
       <div class="opts" id="q9"></div>
-      <div class="nav"><span class="ctr">10 of 10</span><button class="btn btn-primary" id="n9" disabled onclick="showResult()">See my match report</button></div>
+      <div class="nav"><span class="ctr">10 of 11</span><button class="btn btn-primary" id="n9" disabled onclick="go(9,10)">Continue</button></div>
+    </div>
+
+    <div class="step" id="s10">
+      <div class="step-tag">Almost there</div>
+      <div class="q-title">Where can we reach you?</div>
+      <div class="q-hint">Enter your WhatsApp number so the admissions team can follow up. Email is optional.</div>
+      <div class="contact-fields">
+        <div class="field-wrap">
+          <div class="field-label">WhatsApp number <span style="color:#c0392b;margin-left:2px;">*</span></div>
+          <input class="txt" id="phone-inp" type="tel" placeholder="e.g. 98765 43210" />
+        </div>
+        <div class="field-wrap">
+          <div class="field-label">Email address <span class="field-optional">optional</span></div>
+          <input class="txt" id="email-inp" type="email" placeholder="your@email.com" />
+        </div>
+      </div>
+      <div id="phone-error" style="font-size:12px;color:#c0392b;margin-top:0.5rem;display:none;">Please enter your WhatsApp number to continue.</div>
+      <div class="nav"><span class="ctr">11 of 11</span><button class="btn btn-primary" onclick="submitContact()">See my match report</button></div>
     </div>
 
     <div class="step" id="sR"><div id="result"></div></div>
@@ -218,7 +242,7 @@
 <script>
 // ─── CONFIGURATION ────────────────────────────────────────────────────
 // Replace this with your Google Apps Script Web App URL after setup
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyIhdT8NH_g4KMWmTUMdbNsYoJrMpPHEcjSWEbd4pHxpbYiu09ctOzWp0VzsIIp2Lnl/exec";
+const WEBHOOK_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
 // Replace with your actual admissions page URL
 const ADMISSIONS_URL = "https://vidyashilpuniversity.edu.in";
@@ -384,8 +408,20 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove("show"), 3000);
 }
 
+function submitContact() {
+  const phone = document.getElementById('phone-inp').value.trim();
+  const err = document.getElementById('phone-error');
+  if (!phone) {
+    err.style.display = 'block';
+    document.getElementById('phone-inp').focus();
+    return;
+  }
+  err.style.display = 'none';
+  showResult();
+}
+
 function showResult() {
-  document.getElementById("s9").classList.remove("active");
+  document.getElementById("s10").classList.remove("active");
   document.getElementById("pbar").style.width = "100%";
 
   const { dims, overall, prog, timeline, concern } = calcScores();
@@ -410,6 +446,8 @@ function showResult() {
     career_goal:  answers.career   || "",
     campus_pref:  answers.campus   || "",
     location:     answers.location || "",
+    phone:        document.getElementById('phone-inp') ? document.getElementById('phone-inp').value.trim() : '',
+    email:        document.getElementById('email-inp') ? document.getElementById('email-inp').value.trim() : '',
     concern:      answers.concern  || "",
     dim_acad:     dims.acad,
     dim_career:   dims.career,
@@ -535,6 +573,8 @@ function restart() {
   document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
   document.querySelectorAll(".opt").forEach(o => o.classList.remove("sel"));
   for (let i = 1; i <= 9; i++) { const b = document.getElementById("n" + i); if (b) b.disabled = true; }
+  const pi = document.getElementById("phone-inp"); if (pi) pi.value = "";
+  const ei = document.getElementById("email-inp"); if (ei) ei.value = "";
   document.getElementById("name-inp").value = "";
   document.getElementById("s0").classList.add("active");
   document.getElementById("pbar").style.width = "0%";
